@@ -1,6 +1,6 @@
 ﻿using EldenRingPatcher.WIN32API.Enums;
+using EldenRingPatcher.WIN32API.Structures;
 using System;
-using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Text;
 
