@@ -3,6 +3,7 @@ using EldenRingPatcher.WIN32API.Enums;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Text;
 using System.Text.RegularExpressions;
 using Rectangle = EldenRingPatcher.WIN32API.Structures.Rectangle;
 
@@ -15,7 +16,7 @@ namespace EldenRingPatcher
 
         public static List<IntPtr> GetAllHandles(bool outputWindowNames = true)
         {
-            List<IntPtr> windowHandles = new();
+            var windowHandles = new List<IntPtr>();
 
             var processList = Process.GetProcesses();
             var indexCounter = 1;
@@ -47,33 +48,40 @@ namespace EldenRingPatcher
             return Regex.Replace(str, "[^a-zA-Z0-9_. -]+", string.Empty, RegexOptions.Compiled);
         }
 
-        public static Rectangle GetBorderSizes(IntPtr window)
+        public static Rectangle GetBorderSizes(IntPtr hWnd)
         {
-            Rectangle windowBorderSizes = new Rectangle();
-
-            WindowStyleFlag styles = NativeMethods.GetWindowLong(window, WindowLongIndex.GWL_STYLE);
+            var windowRectangle = new Rectangle();
+            var windowStyle = NativeMethods.GetWindowLong(hWnd, WindowLongIndex.GWL_STYLE);
 
             // Window has title-bar
-            if (styles.HasFlag(WindowStyleFlag.WS_CAPTION))
-                windowBorderSizes.Top += NativeMethods.GetSystemMetrics(SystemMetricIndex.SM_CYCAPTION);
+            if (windowStyle.HasFlag(WindowStyleFlag.WS_CAPTION))
+                windowRectangle.Top += NativeMethods.GetSystemMetrics(SystemMetricIndex.SM_CYCAPTION);
 
             // Window has re-sizable borders
-            if (styles.HasFlag(WindowStyleFlag.WS_THICKFRAME))
+            if (windowStyle.HasFlag(WindowStyleFlag.WS_THICKFRAME))
             {
-                windowBorderSizes.Left += NativeMethods.GetSystemMetrics(SystemMetricIndex.SM_CXSIZEFRAME);
-                windowBorderSizes.Right += NativeMethods.GetSystemMetrics(SystemMetricIndex.SM_CXSIZEFRAME);
-                windowBorderSizes.Top += NativeMethods.GetSystemMetrics(SystemMetricIndex.SM_CYSIZEFRAME);
-                windowBorderSizes.Bottom += NativeMethods.GetSystemMetrics(SystemMetricIndex.SM_CYSIZEFRAME);
+                windowRectangle.Left += NativeMethods.GetSystemMetrics(SystemMetricIndex.SM_CXSIZEFRAME);
+                windowRectangle.Right += NativeMethods.GetSystemMetrics(SystemMetricIndex.SM_CXSIZEFRAME);
+                windowRectangle.Top += NativeMethods.GetSystemMetrics(SystemMetricIndex.SM_CYSIZEFRAME);
+                windowRectangle.Bottom += NativeMethods.GetSystemMetrics(SystemMetricIndex.SM_CYSIZEFRAME);
             } // Window has normal borders
-            else if (styles.HasFlag(WindowStyleFlag.WS_BORDER) || styles.HasFlag(WindowStyleFlag.WS_CAPTION))
+            else if (windowStyle.HasFlag(WindowStyleFlag.WS_BORDER) || windowStyle.HasFlag(WindowStyleFlag.WS_CAPTION))
             {
-                windowBorderSizes.Left += NativeMethods.GetSystemMetrics(SystemMetricIndex.SM_CXFIXEDFRAME);
-                windowBorderSizes.Right += NativeMethods.GetSystemMetrics(SystemMetricIndex.SM_CXFIXEDFRAME);
-                windowBorderSizes.Top += NativeMethods.GetSystemMetrics(SystemMetricIndex.SM_CYFIXEDFRAME);
-                windowBorderSizes.Bottom += NativeMethods.GetSystemMetrics(SystemMetricIndex.SM_CYFIXEDFRAME);
+                windowRectangle.Left += NativeMethods.GetSystemMetrics(SystemMetricIndex.SM_CXFIXEDFRAME);
+                windowRectangle.Right += NativeMethods.GetSystemMetrics(SystemMetricIndex.SM_CXFIXEDFRAME);
+                windowRectangle.Top += NativeMethods.GetSystemMetrics(SystemMetricIndex.SM_CYFIXEDFRAME);
+                windowRectangle.Bottom += NativeMethods.GetSystemMetrics(SystemMetricIndex.SM_CYFIXEDFRAME);
             }
 
-            return windowBorderSizes;
+            return windowRectangle;
+        }
+
+        private static string GetText(IntPtr hWnd, int maxStringLength)
+        {
+            var stringBuilder = new StringBuilder(maxStringLength);
+
+            return NativeMethods.GetWindowText(hWnd, stringBuilder, maxStringLength) == 0 
+                ? null : stringBuilder.ToString();
         }
     }
 }
