@@ -3,7 +3,7 @@
 namespace EldenRingPatcher.WIN32API.Enums
 {
     [Flags]
-    enum WindowStyle : uint
+    enum WindowStyleFlag : uint
     {
         WS_OVERLAPPED   = 0x00000000,
         WS_TILED        = 0x00000000,
