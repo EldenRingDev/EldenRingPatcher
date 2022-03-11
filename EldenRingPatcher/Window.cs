@@ -29,7 +29,7 @@ namespace EldenRingPatcher
                 if (outputWindowNames)
                 {
                     var windowTitle = RemoveSpecialCharacters(process.MainWindowTitle);
-                    Console.WriteLine("({0:d}) : {1:s}", indexCounter, windowTitle[..Math.Min(windowTitle.Length, WindowTitleMaxLength)]);
+                    Console.WriteLine("({0}) : {1}", indexCounter, windowTitle[..Math.Min(windowTitle.Length, WindowTitleMaxLength)]);
                 }
 
                 windowHandles.Add(process.MainWindowHandle);
