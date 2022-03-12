@@ -1,5 +1,6 @@
 ﻿using EldenRingPatcher.WIN32API;
 using EldenRingPatcher.WIN32API.Enums;
+using NLog;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -13,6 +14,8 @@ namespace EldenRingPatcher
 {
     public static class Window
     {
+        private static readonly Logger WindowLog = LogManager.GetLogger("Main");
+        // TODO: create settings
         public const int WindowTitleMaxLength = 100;     // Maximum length of window title before its truncated
         private const int ValidateHandleThreshold = 10;  // How often the user selected window handle gets validated
         private const int ClippingRefreshInterval = 100; // How often the clipped area is refreshed in milliseconds
@@ -54,7 +57,7 @@ namespace EldenRingPatcher
                     windowArea.Right -= windowBorderSize.Right + 10;
                     windowArea.Bottom -= windowBorderSize.Bottom + 10;
 
-                    //Console.WriteLine("Clipping cursor to process window!");
+                    WindowLog.Log(LogLevel.Info, "Clipping cursor to process window!");
                     if (NativeMethods.ClipCursor(ref windowArea) == 0)
                         throw new Win32Exception(Marshal.GetLastWin32Error(), $"Clip cursor win32 error. windowArea {windowArea}");
 
@@ -65,7 +68,7 @@ namespace EldenRingPatcher
                 {
                     // If the window lost focus remove the clipping area.
                     // Usually the clipping gets removed by default if the window loses focus. 
-                    //Console.WriteLine("The selected Window is not focused!");
+                    WindowLog.Log(LogLevel.Info, "The selected Window is not focused!");
                     NativeMethods.ClipCursor(IntPtr.Zero);
                     selectedWindowHadFocus = false;
                 }
@@ -78,7 +81,7 @@ namespace EldenRingPatcher
                     var tempWindowTitle = GetText(windowHandle, WindowTitleMaxLength);
                     if (tempWindowTitle == null || tempWindowTitle != selectedWindowTitle)
                     {
-                        //Console.WriteLine("The selected Window doesn't exists anymore!");
+                        WindowLog.Log(LogLevel.Info, "The selected Window doesn't exists anymore!");
                         NativeMethods.ClipCursor(IntPtr.Zero);
                         break;
                     }
@@ -124,6 +127,15 @@ namespace EldenRingPatcher
                 ? null : stringBuilder.ToString();
         }
 
+        public static IntPtr GetHandle(string processName)
+        {
+            foreach (var processList in Process.GetProcesses())
+                if (processList.MainWindowTitle.Contains(processName))
+                    return processList.MainWindowHandle;
+
+            return IntPtr.Zero;
+        }
+
         public static List<IntPtr> GetAllHandles(bool outputWindowNames = true)
         {
             var windowHandles = new List<IntPtr>();
@@ -136,15 +148,13 @@ namespace EldenRingPatcher
             foreach (var process in processList)
             {
                 if (string.IsNullOrEmpty(process.MainWindowTitle)) continue;
-
                 if (verboseOutput)
-                    Console.WriteLine($"{process.ProcessName}: {process.MainWindowHandle}|{process.MainWindowTitle}");
+                    WindowLog.Log(LogLevel.Info, $"{process.ProcessName}: {process.MainWindowHandle}|{process.MainWindowTitle}");
 
                 if (outputWindowNames)
                 {
-                    //var windowTitle = RemoveSpecialChars(process.MainWindowTitle);
-                    var windowTitle = process.MainWindowTitle;
-                    //WindowLog.Log(LogLevel.Info, "({0:d}) : {1}", indexCounter, windowTitle[..Math.Min(windowTitle.Length, WindowTitleMaxLength)]);
+                    var windowTitle = RemoveSpecialChars(process.MainWindowTitle);
+                    WindowLog.Log(LogLevel.Info, "({0:d}) : {1}", indexCounter, windowTitle[..Math.Min(windowTitle.Length, WindowTitleMaxLength)]);
                 }
 
                 windowHandles.Add(process.MainWindowHandle);
@@ -152,15 +162,6 @@ namespace EldenRingPatcher
             }
 
             return windowHandles;
-        }
-
-        public static IntPtr GetHandle(string processName)
-        {
-            foreach (var processList in Process.GetProcesses())
-                if (processList.MainWindowTitle.Contains(processName))
-                    return processList.MainWindowHandle;
-
-            return IntPtr.Zero;
         }
 
         private static string RemoveSpecialChars(string str)

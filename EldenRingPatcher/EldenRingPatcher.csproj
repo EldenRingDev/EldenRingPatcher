@@ -8,4 +8,8 @@
     <None Include="..\.editorconfig" Link=".editorconfig" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\EldenRingPatcher.Controls\EldenRingPatcher.Controls.csproj" />
+  </ItemGroup>
+
 </Project>
