@@ -8,9 +8,7 @@
         public int Right;
         public int Bottom;
 
-        public override string ToString()
-        {
-            return $"Left : {Left:d}, Top : {Top:d}, Right : {Right:d}, Bottom : {Bottom:d}";
-        }
+        public override string ToString() =>
+            $"Left : {Left:d}, Top : {Top:d}, Right : {Right:d}, Bottom : {Bottom:d}";
     }
 }

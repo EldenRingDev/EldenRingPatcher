@@ -24,25 +24,23 @@ namespace EldenRingPatcher
             var windowHandles = new List<IntPtr>();
 
             var processList = Process.GetProcesses();
-            var indexCounter = 1;
 
             windowHandles.Clear();
 
-            foreach (var process in processList)
+            for (var i = 0; i < processList.Length; i++)
             {
-                if (string.IsNullOrEmpty(process.MainWindowTitle)) continue;              
+                if (string.IsNullOrEmpty(processList[i].MainWindowTitle)) continue;              
                 
                 if (verboseOutput) 
-                    Console.WriteLine($"{process.ProcessName}: {process.MainWindowHandle}|{process.MainWindowTitle}");
+                    Console.WriteLine($"{processList[i].ProcessName}: {processList[i].MainWindowHandle}|{processList[i].MainWindowTitle}");
 
                 if (outputWindowNames)
                 {
-                    var windowTitle = RemoveSpecialCharacters(process.MainWindowTitle);
-                    Console.WriteLine("({0}) : {1}", indexCounter, windowTitle[..Math.Min(windowTitle.Length, WindowTitleMaxLength)]);
+                    var windowTitle = RemoveSpecialCharacters(processList[i].MainWindowTitle);
+                    Console.WriteLine("({0}) : {1}", i, windowTitle[..Math.Min(windowTitle.Length, WindowTitleMaxLength)]);
                 }
 
-                windowHandles.Add(process.MainWindowHandle);
-                indexCounter++;
+                windowHandles.Add(processList[i].MainWindowHandle);
             }
 
             return windowHandles;
@@ -50,22 +48,22 @@ namespace EldenRingPatcher
 
         public static void LockCursor(IntPtr windowHandle)
         {
-            Rectangle windowArea = new Rectangle();
-            Rectangle windowBorderSize = new Rectangle();
+            var windowArea = new Rectangle();
+            var windowBorderSize = new Rectangle();
 
-            WindowStyleFlag previousStyles = 0;
-            bool selectedWindowHadFocus = false;
-            int validateHandleCount = 0;
-            string selectedWindowTitle = GetText(windowHandle, WindowTitleMaxLength);
+            WindowStyleFlag previousStyle = 0;
+            var selectedWindowHadFocus = false;
+            var validateHandleCount = 0;
+            var selectedWindowTitle = GetText(windowHandle, WindowTitleMaxLength);
 
             while (true)
             {
                 // Check if window styles changed so the program doesn't break if the window's borders style is changed
-                if (previousStyles != NativeMethods.GetWindowLong(windowHandle, WindowLongIndex.GWL_STYLE))
+                if (previousStyle != NativeMethods.GetWindowLong(windowHandle, WindowLongIndex.GWL_STYLE))
                 {
                     // Determine border sizes for the selected window
                     windowBorderSize = GetBorderSizes(windowHandle);
-                    previousStyles = NativeMethods.GetWindowLong(windowHandle, WindowLongIndex.GWL_STYLE);
+                    previousStyle = NativeMethods.GetWindowLong(windowHandle, WindowLongIndex.GWL_STYLE);
                 }
 
                 if (NativeMethods.GetForegroundWindow() == windowHandle)
@@ -97,7 +95,7 @@ namespace EldenRingPatcher
                 if (validateHandleCount > ValidateHandleThreshold)
                 {
                     validateHandleCount = 0;
-                    string tempWindowTitle = GetText(windowHandle, WindowTitleMaxLength);
+                    var tempWindowTitle = GetText(windowHandle, WindowTitleMaxLength);
                     if (tempWindowTitle == null || tempWindowTitle != selectedWindowTitle)
                     {
                         Console.WriteLine("The selected Window doesn't exists anymore!");
