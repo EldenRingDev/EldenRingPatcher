@@ -6,18 +6,17 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading;
 using Rectangle = EldenRingPatcher.WIN32API.Structures.Rectangle;
 
 namespace EldenRingPatcher
 {
-    public class Window
+    public static class Window
     {
-        private const int WindowTitleMaxLength = 50;     // Maximum length of window title before its truncated
+        public const int WindowTitleMaxLength = 100;     // Maximum length of window title before its truncated
         private const int ValidateHandleThreshold = 10;  // How often the user selected window handle gets validated
         private const int ClippingRefreshInterval = 100; // How often the clipped area is refreshed in milliseconds
-        private static bool verboseOutput = false;
+        public static bool verboseOutput = false;
 
         public static List<IntPtr> GetAllHandles(bool outputWindowNames = true)
         {
@@ -26,21 +25,23 @@ namespace EldenRingPatcher
             var processList = Process.GetProcesses();
 
             windowHandles.Clear();
+            var indexCounter = 1;
 
-            for (var i = 0; i < processList.Length; i++)
+            foreach (var process in processList)
             {
-                if (string.IsNullOrEmpty(processList[i].MainWindowTitle)) continue;              
-                
-                if (verboseOutput) 
-                    Console.WriteLine($"{processList[i].ProcessName}: {processList[i].MainWindowHandle}|{processList[i].MainWindowTitle}");
+                if (string.IsNullOrEmpty(process.MainWindowTitle)) continue;
+
+                if(verboseOutput)
+                    Console.WriteLine($"{process.ProcessName}: {process.MainWindowHandle}|{process.MainWindowTitle}");
 
                 if (outputWindowNames)
                 {
-                    var windowTitle = RemoveSpecialCharacters(processList[i].MainWindowTitle);
-                    Console.WriteLine("({0}) : {1}", i, windowTitle[..Math.Min(windowTitle.Length, WindowTitleMaxLength)]);
+                    var windowTitle = RemoveSpecialChars(process.MainWindowTitle);
+                    Console.WriteLine("({0:d}) : {1}", indexCounter, windowTitle[..Math.Min(windowTitle.Length, WindowTitleMaxLength)]);
                 }
 
-                windowHandles.Add(processList[i].MainWindowHandle);
+                windowHandles.Add(process.MainWindowHandle);
+                indexCounter++;
             }
 
             return windowHandles;
@@ -76,6 +77,7 @@ namespace EldenRingPatcher
                     windowArea.Bottom -= windowBorderSize.Bottom;
                     windowArea.Right -= windowBorderSize.Right;
 
+                    Console.WriteLine("Clipping cursor to process window!");
                     if (NativeMethods.ClipCursor(ref windowArea) == 0)
                         throw new Win32Exception(Marshal.GetLastWin32Error(), $"Clip cursor win32 error. windowArea {windowArea}");
                     
@@ -86,6 +88,7 @@ namespace EldenRingPatcher
                 {
                     // If the window lost focus remove the clipping area.
                     // Usually the clipping gets removed by default if the window loses focus. 
+                    Console.WriteLine("The selected Window is not focused!");
                     NativeMethods.ClipCursor(IntPtr.Zero);
                     selectedWindowHadFocus = false;
                 }
@@ -136,15 +139,29 @@ namespace EldenRingPatcher
             return windowRectangle;
         }
 
-        private static string GetText(IntPtr hWnd, int maxStringLength)
+        public static string GetText(IntPtr hWnd, int maxStringLength)
         {
             var stringBuilder = new StringBuilder(maxStringLength);
 
-            return NativeMethods.GetWindowText(hWnd, stringBuilder, maxStringLength) == 0 
+            return NativeMethods.GetWindowText(hWnd, stringBuilder, maxStringLength) == 0
                 ? null : stringBuilder.ToString();
         }
 
-        private static string RemoveSpecialCharacters(string str) =>
-            Regex.Replace(str, "[^a-zA-Z0-9_. -]+", string.Empty, RegexOptions.Compiled);
+        private static string RemoveSpecialChars(string str)
+        {
+            const char tradeMark = (char)8482;
+            const char registeredTrademark = (char)174;
+            const char copyRight = (char)169;
+
+            var badChars = new[] { tradeMark, registeredTrademark, copyRight };
+
+            foreach (var badChar in badChars)
+            {
+                if (str.Contains(badChar))
+                    return str.Replace(badChar, '\0');
+            }
+
+            return str;
+        }
     }
 }

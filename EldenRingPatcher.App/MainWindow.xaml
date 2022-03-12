@@ -1,0 +1,47 @@
+﻿<Window x:Class="EldenRingPatcher.App.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:EldenRingPatcher.App"
+        mc:Ignorable="d"
+        Title="Elden Ring Patcher 0.0.1 alpha" Height="450" Width="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0">
+            <Menu Width="Auto" Height="20">
+                <MenuItem Header="File">
+                    <MenuItem Header="E_xit" HorizontalAlignment="Left" Width="Auto" Click="AppExit"/>
+                </MenuItem>
+                <MenuItem Header="ENB">
+                    <MenuItem Header="Enb" HorizontalAlignment="Left" Width="Auto"/>
+                </MenuItem>
+                <MenuItem Header="ReShade">
+                    <MenuItem Header="ReShade" HorizontalAlignment="Left" Width="Auto"/>
+                </MenuItem>
+                <MenuItem Header="Mod Folder Explorer">
+                </MenuItem>
+                <MenuItem Header="Net Script Framework">
+                </MenuItem>
+            </Menu>
+        </StackPanel>
+
+        <GroupBox Grid.Row="1" Header="Processes">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"></RowDefinition>
+                    <RowDefinition Height="auto"></RowDefinition>
+                </Grid.RowDefinitions>
+                <Label Grid.Row="0" Content="Select Elden Ring process:" HorizontalAlignment="Stretch"/>
+            </Grid>
+        </GroupBox>
+
+        <GroupBox Grid.Row="2" Header="Main Log">
+        </GroupBox>
+    </Grid>
+</Window>
