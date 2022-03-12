@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:EldenRingPatcher.App"
+        xmlns:nLogViewer="clr-namespace:EldenRingPatcher.Controls.LogViewer;assembly=EldenRingPatcher.Controls"
         mc:Ignorable="d"
         Title="Elden Ring Patcher 0.0.1 alpha" Height="450" Width="800">
     <Grid>
@@ -42,6 +42,7 @@
         </GroupBox>
 
         <GroupBox Grid.Row="2" Header="Main Log">
+            <nLogViewer:NLogViewer TimeWidth="AUTO" LoggerNameWidth="85" LevelWidth="auto" ExceptionWidth="auto" MessageWidth="auto" MaximumLogEntries="2000"/>
         </GroupBox>
     </Grid>
 </Window>

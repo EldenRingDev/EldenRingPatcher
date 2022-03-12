@@ -1,13 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>WinExe</OutputType>
     <TargetFramework>net5.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\EldenRingPatcher.Controls\EldenRingPatcher.Controls.csproj" />
+    <PackageReference Include="NLog" Version="4.7.14" />
   </ItemGroup>
 
 </Project>

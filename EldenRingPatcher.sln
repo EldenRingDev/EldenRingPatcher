@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestConsole", "TestConsole\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EldenRingPatcher.App", "EldenRingPatcher.App\EldenRingPatcher.App.csproj", "{C28F3C73-5679-4A2D-897D-98D9EB6CC921}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EldenRingPatcher.Controls", "EldenRingPatcher.Controls\EldenRingPatcher.Controls.csproj", "{768FC60E-37C6-4E2A-8E88-2B3249C84B6F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{C28F3C73-5679-4A2D-897D-98D9EB6CC921}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C28F3C73-5679-4A2D-897D-98D9EB6CC921}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C28F3C73-5679-4A2D-897D-98D9EB6CC921}.Release|Any CPU.Build.0 = Release|Any CPU
+		{768FC60E-37C6-4E2A-8E88-2B3249C84B6F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{768FC60E-37C6-4E2A-8E88-2B3249C84B6F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{768FC60E-37C6-4E2A-8E88-2B3249C84B6F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{768FC60E-37C6-4E2A-8E88-2B3249C84B6F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
