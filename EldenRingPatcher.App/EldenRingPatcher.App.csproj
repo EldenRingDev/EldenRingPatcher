@@ -8,6 +8,13 @@
 
   <ItemGroup>
     <ProjectReference Include="..\EldenRingPatcher.Controls\EldenRingPatcher.Controls.csproj" />
+    <ProjectReference Include="..\EldenRingPatcher\EldenRingPatcher.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="NLog.config">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

@@ -18,35 +18,6 @@ namespace EldenRingPatcher
         private const int ClippingRefreshInterval = 100; // How often the clipped area is refreshed in milliseconds
         public static bool verboseOutput = false;
 
-        public static List<IntPtr> GetAllHandles(bool outputWindowNames = true)
-        {
-            var windowHandles = new List<IntPtr>();
-
-            var processList = Process.GetProcesses();
-
-            windowHandles.Clear();
-            var indexCounter = 1;
-
-            foreach (var process in processList)
-            {
-                if (string.IsNullOrEmpty(process.MainWindowTitle)) continue;
-
-                if(verboseOutput)
-                    Console.WriteLine($"{process.ProcessName}: {process.MainWindowHandle}|{process.MainWindowTitle}");
-
-                if (outputWindowNames)
-                {
-                    var windowTitle = RemoveSpecialChars(process.MainWindowTitle);
-                    Console.WriteLine("({0:d}) : {1}", indexCounter, windowTitle[..Math.Min(windowTitle.Length, WindowTitleMaxLength)]);
-                }
-
-                windowHandles.Add(process.MainWindowHandle);
-                indexCounter++;
-            }
-
-            return windowHandles;
-        }
-
         public static void LockCursor(IntPtr windowHandle)
         {
             var windowArea = new Rectangle();
@@ -147,6 +118,44 @@ namespace EldenRingPatcher
                 ? null : RemoveSpecialChars(stringBuilder.ToString());
         }
 
+        public static List<IntPtr> GetAllHandles(bool outputWindowNames = true)
+        {
+            var windowHandles = new List<IntPtr>();
+
+            var processList = Process.GetProcesses();
+
+            windowHandles.Clear();
+            var indexCounter = 1;
+
+            foreach (var process in processList)
+            {
+                if (string.IsNullOrEmpty(process.MainWindowTitle)) continue;
+
+                if(verboseOutput)
+                    Console.WriteLine($"{process.ProcessName}: {process.MainWindowHandle}|{process.MainWindowTitle}");
+
+                if (outputWindowNames)
+                {
+                    var windowTitle = RemoveSpecialChars(process.MainWindowTitle);
+                    Console.WriteLine("({0:d}) : {1}", indexCounter, windowTitle[..Math.Min(windowTitle.Length, WindowTitleMaxLength)]);
+                }
+
+                windowHandles.Add(process.MainWindowHandle);
+                indexCounter++;
+            }
+
+            return windowHandles;
+        }
+
+        public static IntPtr GetHandle(string processName)
+        {
+            foreach (var processList in Process.GetProcesses())
+                if (processList.MainWindowTitle.Contains(processName))
+                    return processList.MainWindowHandle;
+
+            return IntPtr.Zero;
+        }
+
         private static string RemoveSpecialChars(string str)
         {
             const char tradeMark = (char)8482;
@@ -156,10 +165,8 @@ namespace EldenRingPatcher
             var badChars = new[] { tradeMark, registeredTrademark, copyRight };
 
             foreach (var badChar in badChars)
-            {
                 if (str.Contains(badChar))
                     return str.Replace(badChar, '\0');
-            }
 
             return str;
         }
