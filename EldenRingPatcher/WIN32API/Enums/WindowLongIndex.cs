@@ -1,6 +1,6 @@
 ﻿namespace EldenRingPatcher.WIN32API.Enums
 {
-    enum WindowLongIndex : int
+    internal enum WindowLongIndex
     {
         // [in] nIndex params
         GWL_EXSTYLE = -20,

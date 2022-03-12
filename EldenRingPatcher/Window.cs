@@ -11,20 +11,20 @@ using Rectangle = EldenRingPatcher.WIN32API.Structures.Rectangle;
 
 namespace EldenRingPatcher
 {
-    public static class Windowz
+    public static class Window
     {
         public const int WindowTitleMaxLength = 100;     // Maximum length of window title before its truncated
         private const int ValidateHandleThreshold = 10;  // How often the user selected window handle gets validated
         private const int ClippingRefreshInterval = 100; // How often the clipped area is refreshed in milliseconds
         private static readonly bool verboseOutput = false;
 
-        public static void LaunchLockCursorThread(IntPtr windowHandle)
+        public static void LaunchCursorLockingThread(IntPtr windowHandle)
         {
             new Thread(() =>
                 { LockCursor(windowHandle); }).Start();
         }
 
-        public static void LockCursor(IntPtr windowHandle)
+        private static void LockCursor(IntPtr windowHandle)
         {
             var windowArea = new Rectangle();
             var windowBorderSize = new Rectangle();

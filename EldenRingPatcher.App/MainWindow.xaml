@@ -16,7 +16,7 @@
         <StackPanel Grid.Row="0">
             <Menu Width="Auto" Height="20">
                 <MenuItem Header="File">
-                    <MenuItem Header="E_xit" HorizontalAlignment="Left" Width="Auto" Click="AppExit"/>
+                    <MenuItem Header="Exit" HorizontalAlignment="Left" Width="Auto" Click="AppExit"/>
                 </MenuItem>
                 <MenuItem Header="ENB">
                     <MenuItem Header="Enb" HorizontalAlignment="Left" Width="Auto"/>

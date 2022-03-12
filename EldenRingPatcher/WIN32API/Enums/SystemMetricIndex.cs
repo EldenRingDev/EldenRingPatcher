@@ -1,6 +1,6 @@
 ﻿namespace EldenRingPatcher.WIN32API.Enums
 {
-    enum SystemMetricIndex : int
+    internal enum SystemMetricIndex
     {
         // [in] int nIndex params
         SM_CXSCREEN                    = 0,  // 0x00

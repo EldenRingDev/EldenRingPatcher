@@ -24,20 +24,18 @@ namespace EldenRingPatcher.App
 
         private void LockCursorToEldenRingButton(object sender, EventArgs e)
         {
-            var hEldenRing = Windowz.GetHandle("ELDEN RING™");
+            var hEldenRing = Window.GetHandle("ELDEN RING™");
             if (hEldenRing == IntPtr.Zero)
-            {
                 MainLog.Log(LogLevel.Error, "Failed to get Elden Ring window handle!");
-            }
 
             MainLog.Log(LogLevel.Info, "Obtained Elden Ring window handle: 0x{0:x}", hEldenRing);
 
-            var windowTitle = Windowz.GetText(hEldenRing, Windowz.WindowTitleMaxLength);
+            var windowTitle = Window.GetText(hEldenRing, Window.WindowTitleMaxLength);
             if (windowTitle == null)
                 MainLog.Log(LogLevel.Error, "The Elden Ring window doesn't exists anymore!");
 
             MainLog.Log(LogLevel.Info, "Locking Cursor to {0}", windowTitle);
-            Windowz.LaunchLockCursorThread(hEldenRing);
+            Window.LaunchCursorLockingThread(hEldenRing);
         }
     }
 }
