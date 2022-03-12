@@ -1,6 +1,6 @@
-﻿using System;
+﻿using NLog;
+using System;
 using System.Windows;
-using NLog;
 
 namespace EldenRingPatcher.App
 {
@@ -14,8 +14,7 @@ namespace EldenRingPatcher.App
         public MainWindow()
         {
             InitializeComponent();
-            MainLog.Log(LogLevel.Warn, "Started!");
-            LockCursorToEldenRingProc();
+            MainLog.Log(LogLevel.Info, "Started!");
         }
 
         private void AppExit(object sender, RoutedEventArgs e)
@@ -23,16 +22,22 @@ namespace EldenRingPatcher.App
             throw new NotImplementedException();
         }
 
-        private void LockCursorToEldenRingProc()
+        private void LockCursorToEldenRingButton(object sender, EventArgs e)
         {
-            IntPtr eldenRingHandle = Window.GetHandle("Elden RingT");
+            var hEldenRing = Windowz.GetHandle("ELDEN RING™");
+            if (hEldenRing == IntPtr.Zero)
+            {
+                MainLog.Log(LogLevel.Error, "Failed to get Elden Ring window handle!");
+            }
 
-            var windowTitle = Window.GetText(eldenRingHandle, Window.WindowTitleMaxLength);
+            MainLog.Log(LogLevel.Info, "Obtained Elden Ring window handle: 0x{0:x}", hEldenRing);
+
+            var windowTitle = Windowz.GetText(hEldenRing, Windowz.WindowTitleMaxLength);
             if (windowTitle == null)
-                MainLog.Log(LogLevel.Warn, "The Elden Ring window doesn't exists anymore!");
+                MainLog.Log(LogLevel.Error, "The Elden Ring window doesn't exists anymore!");
 
             MainLog.Log(LogLevel.Info, "Locking Cursor to {0}", windowTitle);
-            Window.LockCursor(eldenRingHandle);
+            Windowz.LaunchLockCursorThread(hEldenRing);
         }
     }
 }

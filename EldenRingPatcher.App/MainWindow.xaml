@@ -31,13 +31,13 @@
             </Menu>
         </StackPanel>
 
-        <GroupBox Grid.Row="1" Header="Processes">
+        <GroupBox Grid.Row="1" Header="Window">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="auto"></RowDefinition>
                     <RowDefinition Height="auto"></RowDefinition>
                 </Grid.RowDefinitions>
-                <Label Grid.Row="0" Content="Select Elden Ring process:" HorizontalAlignment="Stretch"/>
+                <Button Grid.Row="0" Content="LockCursorToWindow" HorizontalAlignment="Left" Margin="10,3,0,0" VerticalAlignment="Top" Click="LockCursorToEldenRingButton"/>
             </Grid>
         </GroupBox>
 

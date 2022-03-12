@@ -8,7 +8,7 @@ namespace EldenRingPatcher.WIN32API
 {
     public static class NativeMethods
     {
-        [DllImport("user32.dll", CharSet = CharSet.Auto, EntryPoint = "GetWindowText")]
+        [DllImport("user32.dll", CharSet = CharSet.Unicode, EntryPoint = "GetWindowText")]
         internal static extern int GetWindowText(IntPtr hWnd, StringBuilder lpString, int maxCount);
 
         [DllImport("user32.dll", CharSet = CharSet.Auto, EntryPoint = "GetForegroundWindow")]
@@ -16,9 +16,6 @@ namespace EldenRingPatcher.WIN32API
 
         [DllImport("user32.dll", CharSet = CharSet.Auto, EntryPoint = "GetWindowRect")]
         internal static extern int GetWindowRect(IntPtr hWnd, ref Rectangle lpRect);
-
-        [DllImport("user32.dll", CharSet = CharSet.Auto, EntryPoint = "GetClientRect")]
-        internal static extern int GetClientRect(IntPtr hWnd, ref Rectangle lpRect);
 
         [DllImport("user32.dll", CharSet = CharSet.Auto, EntryPoint = "ClipCursor")]
         internal static extern int ClipCursor(ref Rectangle lpRect);

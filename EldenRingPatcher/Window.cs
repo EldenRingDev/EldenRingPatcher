@@ -11,12 +11,18 @@ using Rectangle = EldenRingPatcher.WIN32API.Structures.Rectangle;
 
 namespace EldenRingPatcher
 {
-    public static class Window
+    public static class Windowz
     {
         public const int WindowTitleMaxLength = 100;     // Maximum length of window title before its truncated
         private const int ValidateHandleThreshold = 10;  // How often the user selected window handle gets validated
         private const int ClippingRefreshInterval = 100; // How often the clipped area is refreshed in milliseconds
-        public static bool verboseOutput = false;
+        private static readonly bool verboseOutput = false;
+
+        public static void LaunchLockCursorThread(IntPtr windowHandle)
+        {
+            new Thread(() =>
+                { LockCursor(windowHandle); }).Start();
+        }
 
         public static void LockCursor(IntPtr windowHandle)
         {
@@ -48,10 +54,10 @@ namespace EldenRingPatcher
                     windowArea.Right -= windowBorderSize.Right + 10;
                     windowArea.Bottom -= windowBorderSize.Bottom + 10;
 
-                    Console.WriteLine("Clipping cursor to process window!");
+                    //Console.WriteLine("Clipping cursor to process window!");
                     if (NativeMethods.ClipCursor(ref windowArea) == 0)
                         throw new Win32Exception(Marshal.GetLastWin32Error(), $"Clip cursor win32 error. windowArea {windowArea}");
-                    
+
                     selectedWindowHadFocus = true;
                     Thread.Sleep(300); // This is not nice :[
                 }
@@ -59,7 +65,7 @@ namespace EldenRingPatcher
                 {
                     // If the window lost focus remove the clipping area.
                     // Usually the clipping gets removed by default if the window loses focus. 
-                    Console.WriteLine("The selected Window is not focused!");
+                    //Console.WriteLine("The selected Window is not focused!");
                     NativeMethods.ClipCursor(IntPtr.Zero);
                     selectedWindowHadFocus = false;
                 }
@@ -72,7 +78,7 @@ namespace EldenRingPatcher
                     var tempWindowTitle = GetText(windowHandle, WindowTitleMaxLength);
                     if (tempWindowTitle == null || tempWindowTitle != selectedWindowTitle)
                     {
-                        Console.WriteLine("The selected Window doesn't exists anymore!");
+                        //Console.WriteLine("The selected Window doesn't exists anymore!");
                         NativeMethods.ClipCursor(IntPtr.Zero);
                         break;
                     }
@@ -115,7 +121,7 @@ namespace EldenRingPatcher
             var stringBuilder = new StringBuilder(maxStringLength);
 
             return NativeMethods.GetWindowText(hWnd, stringBuilder, maxStringLength) == 0
-                ? null : RemoveSpecialChars(stringBuilder.ToString());
+                ? null : stringBuilder.ToString();
         }
 
         public static List<IntPtr> GetAllHandles(bool outputWindowNames = true)
@@ -131,13 +137,14 @@ namespace EldenRingPatcher
             {
                 if (string.IsNullOrEmpty(process.MainWindowTitle)) continue;
 
-                if(verboseOutput)
+                if (verboseOutput)
                     Console.WriteLine($"{process.ProcessName}: {process.MainWindowHandle}|{process.MainWindowTitle}");
 
                 if (outputWindowNames)
                 {
-                    var windowTitle = RemoveSpecialChars(process.MainWindowTitle);
-                    Console.WriteLine("({0:d}) : {1}", indexCounter, windowTitle[..Math.Min(windowTitle.Length, WindowTitleMaxLength)]);
+                    //var windowTitle = RemoveSpecialChars(process.MainWindowTitle);
+                    var windowTitle = process.MainWindowTitle;
+                    //WindowLog.Log(LogLevel.Info, "({0:d}) : {1}", indexCounter, windowTitle[..Math.Min(windowTitle.Length, WindowTitleMaxLength)]);
                 }
 
                 windowHandles.Add(process.MainWindowHandle);

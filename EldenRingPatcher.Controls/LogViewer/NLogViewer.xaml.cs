@@ -16,8 +16,8 @@ namespace EldenRingPatcher.Controls.LogViewer
     /// </summary>
     public partial class NLogViewer : INotifyPropertyChanged
     {
-        public ObservableCollection<LogEventViewModel> LogEntries { get; private set; }
-        private bool IsTargetConfigured { get; set; }
+        public ObservableCollection<LogEventViewModel> LogEntries { get; }
+        private bool IsTargetConfigured { get; }
         public object BackgroundMouseOver { get; set; }
         public object ForegroundMouseOver { get; set; }
 
@@ -101,7 +101,7 @@ namespace EldenRingPatcher.Controls.LogViewer
             }
         }
 
-        private void InitLoggingConfiguration()
+        private static void InitLoggingConfiguration()
         {
             LoggingConfiguration conf;
             var assemblyFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
@@ -112,7 +112,7 @@ namespace EldenRingPatcher.Controls.LogViewer
                 LogManager.ThrowConfigExceptions = true;
                 conf = new XmlLoggingConfiguration(Path.Combine(assemblyFolder, "NLog.config"));
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 conf = new LoggingConfiguration();
             }
@@ -121,7 +121,7 @@ namespace EldenRingPatcher.Controls.LogViewer
             {
                 LogManager.Configuration = conf;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // ignored
             }
@@ -131,24 +131,24 @@ namespace EldenRingPatcher.Controls.LogViewer
         {
             var vm = new LogEventViewModel(log.LogEvent);
 
-            Dispatcher.BeginInvoke(new Action(() =>
-            {
-                var addLogEvent = vm.Level.ToLower() switch
-                {
-                    "debug" => ShowDebug,
-                    "info" => ShowInfo,
-                    "trace" => ShowTrace,
-                    "warn" => ShowWarn,
-                    "error" => ShowError,
-                    "fatal" => ShowFatal,
-                    _ => false
-                };
-                if (!addLogEvent) return;
-                if (LogEntries.Count >= MaximumLogEntries) LogEntries.RemoveAt(0);
+            _ = Dispatcher.BeginInvoke(new Action(() =>
+              {
+                  var addLogEvent = vm.Level.ToLower() switch
+                  {
+                      "debug" => ShowDebug,
+                      "info" => ShowInfo,
+                      "trace" => ShowTrace,
+                      "warn" => ShowWarn,
+                      "error" => ShowError,
+                      "fatal" => ShowFatal,
+                      _ => false
+                  };
+                  if (!addLogEvent) return;
+                  if (LogEntries.Count >= MaximumLogEntries) LogEntries.RemoveAt(0);
 
-                LogEntries.Add(vm);
-                grid.ScrollIntoView(vm);
-            }));
+                  LogEntries.Add(vm);
+                  grid.ScrollIntoView(vm);
+              }));
         }
 
         private void ClearAll_Click(object sender, RoutedEventArgs e)
