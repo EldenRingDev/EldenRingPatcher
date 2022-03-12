@@ -72,17 +72,17 @@ namespace EldenRingPatcher
                     if (NativeMethods.GetWindowRect(windowHandle, ref windowArea) == 0)
                         throw new Win32Exception(Marshal.GetLastWin32Error(), $"Get window rectangle win32 error. selectedWindowHandle {windowHandle:d}");
 
-                    windowArea.Left += windowBorderSize.Left;
-                    windowArea.Top += windowBorderSize.Top;
-                    windowArea.Bottom -= windowBorderSize.Bottom;
-                    windowArea.Right -= windowBorderSize.Right;
+                    windowArea.Top += windowBorderSize.Top + 10;
+                    windowArea.Left += windowBorderSize.Left + 10;
+                    windowArea.Right -= windowBorderSize.Right + 10;
+                    windowArea.Bottom -= windowBorderSize.Bottom + 10;
 
                     Console.WriteLine("Clipping cursor to process window!");
                     if (NativeMethods.ClipCursor(ref windowArea) == 0)
                         throw new Win32Exception(Marshal.GetLastWin32Error(), $"Clip cursor win32 error. windowArea {windowArea}");
                     
                     selectedWindowHadFocus = true;
-                    Thread.Sleep(400); // This is not nice :[
+                    Thread.Sleep(300); // This is not nice :[
                 }
                 else if (selectedWindowHadFocus)
                 {
@@ -144,7 +144,7 @@ namespace EldenRingPatcher
             var stringBuilder = new StringBuilder(maxStringLength);
 
             return NativeMethods.GetWindowText(hWnd, stringBuilder, maxStringLength) == 0
-                ? null : stringBuilder.ToString();
+                ? null : RemoveSpecialChars(stringBuilder.ToString());
         }
 
         private static string RemoveSpecialChars(string str)
