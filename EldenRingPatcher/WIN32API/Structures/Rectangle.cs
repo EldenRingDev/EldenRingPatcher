@@ -1,6 +1,9 @@
-﻿namespace EldenRingPatcher.WIN32API.Structures
+﻿using System.Runtime.InteropServices;
+
+namespace EldenRingPatcher.WIN32API.Structures
 {
     // RECT structure (windef.h)
+    [StructLayout(LayoutKind.Sequential)]
     public struct Rectangle
     {
         public int Left;

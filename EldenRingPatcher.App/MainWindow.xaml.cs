@@ -19,7 +19,7 @@ namespace EldenRingPatcher.App
 
         private void AppExit(object sender, RoutedEventArgs e)
         {
-            throw new NotImplementedException();
+            Mouse.ReleaseHook();
         }
 
         private void LockCursorToWindow(object sender, EventArgs e)
@@ -35,6 +35,7 @@ namespace EldenRingPatcher.App
                 MainLog.Log(LogLevel.Error, "The Elden Ring window doesn't exists anymore!");
 
             MainLog.Log(LogLevel.Info, "Locking Cursor to {0}", windowTitle);
+            Mouse.InitHook();
             Window.LaunchCursorLockingThread(hEldenRing);
         }
     }

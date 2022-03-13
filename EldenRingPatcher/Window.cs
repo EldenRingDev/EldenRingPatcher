@@ -52,6 +52,8 @@ namespace EldenRingPatcher
                     windowArea.Right -= windowBorderSize.Right + 10;
                     windowArea.Bottom -= windowBorderSize.Bottom + 10;
 
+                   // TODO: check if CurPosition outside boundaries of windowArea clip only if needed to
+
                     WindowLog.Log(LogLevel.Info, "Clipping cursor to process window!");
                     if (NativeMethods.ClipCursor(ref windowArea) == 0)
                         throw new Win32Exception(Marshal.GetLastWin32Error(), $"Clip cursor win32 error. windowArea {windowArea}");

@@ -8,25 +8,38 @@ namespace EldenRingPatcher.WIN32API
 {
     public static class NativeMethods
     {
-        [DllImport("user32.dll", CharSet = CharSet.Unicode, EntryPoint = "GetWindowText")]
+        [DllImport("user32.dll", CharSet = CharSet.Unicode, EntryPoint = "GetWindowText", SetLastError = true)]
         internal static extern int GetWindowText(IntPtr hWnd, StringBuilder lpString, int maxCount);
 
-        [DllImport("user32.dll", CharSet = CharSet.Auto, EntryPoint = "GetForegroundWindow")]
+        [DllImport("user32.dll", CharSet = CharSet.Auto, EntryPoint = "GetForegroundWindow", SetLastError = true)]
         internal static extern IntPtr GetForegroundWindow();
 
-        [DllImport("user32.dll", CharSet = CharSet.Auto, EntryPoint = "GetWindowRect")]
+        [DllImport("user32.dll", CharSet = CharSet.Auto, EntryPoint = "GetWindowRect", SetLastError = true)]
         internal static extern int GetWindowRect(IntPtr hWnd, ref Rectangle lpRect);
 
-        [DllImport("user32.dll", CharSet = CharSet.Auto, EntryPoint = "ClipCursor")]
+        [DllImport("user32.dll", CharSet = CharSet.Auto, EntryPoint = "ClipCursor", SetLastError = true)]
         internal static extern int ClipCursor(ref Rectangle lpRect);
 
-        [DllImport("user32.dll", CharSet = CharSet.Auto, EntryPoint = "ClipCursor")]
+        [DllImport("user32.dll", CharSet = CharSet.Auto, EntryPoint = "ClipCursor", SetLastError = true)]
         internal static extern int ClipCursor(IntPtr lpRect);
 
-        [DllImport("user32.dll", CharSet = CharSet.Auto, EntryPoint = "GetSystemMetrics")]
+        [DllImport("user32.dll", CharSet = CharSet.Auto, EntryPoint = "GetSystemMetrics", SetLastError = true)]
         internal static extern int GetSystemMetrics(SystemMetricIndex index);
 
-        [DllImport("user32.dll", CharSet = CharSet.Auto, EntryPoint = "GetWindowLong")]
+        [DllImport("user32.dll", CharSet = CharSet.Auto, EntryPoint = "GetWindowLong", SetLastError = true)]
         internal static extern WindowStyleFlag GetWindowLong(IntPtr hWnd, WindowLongIndex index);
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto, EntryPoint = "SetWindowsHookEx", SetLastError = true)]
+        internal static extern IntPtr SetWindowsHookEx(int idHook, Delegates.LowLevelMouseProc lpFunction, IntPtr hMod, uint dwThreadId);
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto, EntryPoint = "UnhookWindowsHookEx", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        internal static extern bool UnhookWindowsHookEx(IntPtr hhk);
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto, EntryPoint = "CallNextHookEx", SetLastError = true)]
+        internal static extern IntPtr CallNextHookEx(IntPtr hhk, int nCode, IntPtr wParam, IntPtr lParam);
+
+        [DllImport("kernel32.dll", CharSet = CharSet.Unicode, EntryPoint = "GetModuleHandle", SetLastError = true)]
+        internal static extern IntPtr GetModuleHandle(string lpModuleName);
     }
 }
