@@ -22,7 +22,7 @@ namespace EldenRingPatcher.App
             throw new NotImplementedException();
         }
 
-        private void LockCursorToEldenRingButton(object sender, EventArgs e)
+        private void LockCursorToWindow(object sender, EventArgs e)
         {
             var hEldenRing = Window.GetHandle("ELDEN RING™");
             if (hEldenRing == IntPtr.Zero)
@@ -30,7 +30,7 @@ namespace EldenRingPatcher.App
 
             MainLog.Log(LogLevel.Info, "Obtained Elden Ring window handle: 0x{0:x}", hEldenRing);
 
-            var windowTitle = Window.GetText(hEldenRing, Window.WindowTitleMaxLength);
+            var windowTitle = Window.GetText(hEldenRing, WindowSettings.WindowTitleMaxLength);
             if (windowTitle == null)
                 MainLog.Log(LogLevel.Error, "The Elden Ring window doesn't exists anymore!");
 

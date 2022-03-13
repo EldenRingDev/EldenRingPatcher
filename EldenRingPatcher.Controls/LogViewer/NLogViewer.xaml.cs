@@ -17,7 +17,6 @@ namespace EldenRingPatcher.Controls.LogViewer
     public partial class NLogViewer : INotifyPropertyChanged
     {
         public ObservableCollection<LogEventViewModel> LogEntries { get; }
-        private bool IsTargetConfigured { get; }
         public object BackgroundMouseOver { get; set; }
         public object ForegroundMouseOver { get; set; }
 
@@ -43,7 +42,9 @@ namespace EldenRingPatcher.Controls.LogViewer
         public bool AutoScrollToLast { get; set; } = true;
 
         #region "Flags to turn show/hide levels"
-        private bool showTrace = true, showInfo = true, showDebug = true, showWarn = true, showError = true, showFatal = true;
+        private bool showTrace = true, showInfo = true,
+            showDebug = true, showWarn = true,
+            showError = true, showFatal = true;
 
         public bool ShowTrace
         {
@@ -85,7 +86,6 @@ namespace EldenRingPatcher.Controls.LogViewer
 
         public NLogViewer()
         {
-            IsTargetConfigured = false;
             LogEntries = new ObservableCollection<LogEventViewModel>();
 
             InitializeComponent();
@@ -94,9 +94,10 @@ namespace EldenRingPatcher.Controls.LogViewer
 
             InitLoggingConfiguration();
 
-            foreach (var target in LogManager.Configuration.AllTargets.Where(t => t is NLogViewerTarget).Cast<NLogViewerTarget>())
+            foreach (var target in LogManager.Configuration.AllTargets
+                         .Where(t => t is NLogViewerTarget)
+                         .Cast<NLogViewerTarget>())
             {
-                IsTargetConfigured = true;
                 target.LogReceived += LogReceived;
             }
         }

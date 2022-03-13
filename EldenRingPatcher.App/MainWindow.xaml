@@ -37,7 +37,7 @@
                     <RowDefinition Height="auto"></RowDefinition>
                     <RowDefinition Height="auto"></RowDefinition>
                 </Grid.RowDefinitions>
-                <Button Grid.Row="0" Content="LockCursorToWindow" HorizontalAlignment="Left" Margin="10,3,0,0" VerticalAlignment="Top" Click="LockCursorToEldenRingButton"/>
+                <Button Grid.Row="0" Content="Lock Cursor To Window" HorizontalAlignment="Left" Margin="10,3,0,0" VerticalAlignment="Top" Click="LockCursorToWindow"/>
             </Grid>
         </GroupBox>
 

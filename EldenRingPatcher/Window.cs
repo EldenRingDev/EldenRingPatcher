@@ -14,12 +14,7 @@ namespace EldenRingPatcher
 {
     public static class Window
     {
-        private static readonly Logger WindowLog = LogManager.GetLogger("Main");
-        // TODO: create settings
-        public const int WindowTitleMaxLength = 100;     // Maximum length of window title before its truncated
-        private const int ValidateHandleThreshold = 10;  // How often the user selected window handle gets validated
-        private const int ClippingRefreshInterval = 100; // How often the clipped area is refreshed in milliseconds
-        private static readonly bool verboseOutput = false;
+        private static readonly Logger WindowLog = LogManager.GetLogger("Window");
 
         public static void LaunchCursorLockingThread(IntPtr windowHandle)
         {
@@ -35,7 +30,7 @@ namespace EldenRingPatcher
             WindowStyleFlag previousStyle = 0;
             var selectedWindowHadFocus = false;
             var validateHandleCount = 0;
-            var selectedWindowTitle = GetText(windowHandle, WindowTitleMaxLength);
+            var selectedWindowTitle = GetText(windowHandle, WindowSettings.WindowTitleMaxLength);
 
             while (true)
             {
@@ -68,26 +63,26 @@ namespace EldenRingPatcher
                 {
                     // If the window lost focus remove the clipping area.
                     // Usually the clipping gets removed by default if the window loses focus. 
-                    WindowLog.Log(LogLevel.Info, "The selected Window is not focused!");
+                    WindowLog.Log(LogLevel.Info, "The current game window is not focused!");
                     NativeMethods.ClipCursor(IntPtr.Zero);
                     selectedWindowHadFocus = false;
                 }
 
                 // Validate the window every x amount of loops 
                 validateHandleCount++;
-                if (validateHandleCount > ValidateHandleThreshold)
+                if (validateHandleCount > WindowSettings.ValidateHandleThreshold)
                 {
                     validateHandleCount = 0;
-                    var tempWindowTitle = GetText(windowHandle, WindowTitleMaxLength);
+                    var tempWindowTitle = GetText(windowHandle, WindowSettings.WindowTitleMaxLength);
                     if (tempWindowTitle == null || tempWindowTitle != selectedWindowTitle)
                     {
-                        WindowLog.Log(LogLevel.Info, "The selected Window doesn't exists anymore!");
+                        WindowLog.Log(LogLevel.Info, "The current game window doesn't exists anymore!");
                         NativeMethods.ClipCursor(IntPtr.Zero);
                         break;
                     }
                 }
 
-                Thread.Sleep(ClippingRefreshInterval);
+                Thread.Sleep(WindowSettings.ClippingRefreshInterval);
             }
         }
 
@@ -148,13 +143,15 @@ namespace EldenRingPatcher
             foreach (var process in processList)
             {
                 if (string.IsNullOrEmpty(process.MainWindowTitle)) continue;
-                if (verboseOutput)
+                if (WindowSettings.VerboseOutput)
                     WindowLog.Log(LogLevel.Info, $"{process.ProcessName}: {process.MainWindowHandle}|{process.MainWindowTitle}");
 
                 if (outputWindowNames)
                 {
                     var windowTitle = RemoveSpecialChars(process.MainWindowTitle);
-                    WindowLog.Log(LogLevel.Info, "({0:d}) : {1}", indexCounter, windowTitle[..Math.Min(windowTitle.Length, WindowTitleMaxLength)]);
+                    WindowLog.Log(LogLevel.Info, "({0:d}) : {1}",
+                        indexCounter,
+                        windowTitle[..Math.Min(windowTitle.Length, WindowSettings.WindowTitleMaxLength)]);
                 }
 
                 windowHandles.Add(process.MainWindowHandle);

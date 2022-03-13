@@ -19,7 +19,7 @@ namespace EldenRingPatcher.WIN32API.Enums
         WS_DLGFRAME     = 0x00400000,
         WS_BORDER       = 0x00800000,
         WS_CAPTION      = 0x00C00000,
-        WS_MAXIMIZE     = 0x01000000, 
+        WS_MAXIMIZE     = 0x01000000,
         WS_CLIPCHILDREN = 0x02000000,
         WS_CLIPSIBLINGS = 0x04000000,
         WS_DISABLED     = 0x08000000,

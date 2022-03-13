@@ -93,9 +93,9 @@
         SM_CXPADDEDBORDER              = 92, // 0x5C
         SM_DIGITIZER                   = 94, // 0x5E
         SM_MAXIMUMTOUCHES              = 95, // 0x5F
-        SM_REMOTESESSION               = 0x1000, 
-        SM_SHUTTINGDOWN                = 0x2000, 
-        SM_REMOTECONTROL               = 0x2001, 
+        SM_REMOTESESSION               = 0x1000,
+        SM_SHUTTINGDOWN                = 0x2000,
+        SM_REMOTECONTROL               = 0x2001,
         SM_CONVERTIBLESLATEMODE        = 0x2003,
         SM_SYSTEMDOCKED                = 0x2004,
     }

@@ -7,6 +7,7 @@ namespace EldenRingPatcher.Controls.LogViewer
 {
     public class LogEventViewModel
     {
+        public string ToolTip { get; }
         public string Level { get; }
         public string FormattedMessage { get; }
         public Exception Exception { get; }
@@ -15,6 +16,7 @@ namespace EldenRingPatcher.Controls.LogViewer
 
         public LogEventViewModel(LogEventInfo logEventInfo)
         {
+            ToolTip = logEventInfo.FormattedMessage;
             Level = logEventInfo.Level.ToString();
             FormattedMessage = logEventInfo.FormattedMessage;
             Exception = logEventInfo.Exception;
