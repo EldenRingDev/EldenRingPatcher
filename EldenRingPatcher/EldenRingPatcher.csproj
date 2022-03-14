@@ -9,6 +9,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Reloaded.Memory.Sigscan" Version="1.2.1" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\EldenRingPatcher.Controls\EldenRingPatcher.Controls.csproj" />
   </ItemGroup>
 

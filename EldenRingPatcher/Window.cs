@@ -2,9 +2,7 @@
 using EldenRingPatcher.WIN32API.Enums;
 using NLog;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
@@ -16,6 +14,83 @@ namespace EldenRingPatcher
     {
         private static readonly Logger WindowLog = LogManager.GetLogger("Window");
 
+        public static string Title
+        {
+            get
+            {
+                if (!GameClient.Attached) 
+                    return string.Empty;
+
+                var windowTitle = GetText(GameClient.WindowHandle, WindowSettings.WindowTitleMaxLength);
+                if (!string.IsNullOrEmpty(windowTitle)) return windowTitle;
+
+                WindowLog.Log(LogLevel.Error, "The game window doesn't exists anymore!");
+                return string.Empty;
+            }
+            set => throw new NotImplementedException();
+        }
+
+        private static Rectangle borderSizes;
+        public static Rectangle BorderSizes
+        {
+            get
+            {
+                if (!GameClient.Attached) 
+                    return new Rectangle();
+
+                if (borderSizes.Top != 0 && borderSizes.Left != 0
+                                         && borderSizes.Right != 0
+                                         && borderSizes.Bottom != 0)
+                    return borderSizes;
+
+                return GameClient.WindowHandle != IntPtr.Zero
+                    ? GetBorderSizes(GameClient.WindowHandle)
+                    : new Rectangle();
+            }
+            private set
+            {
+                borderSizes.Top = value.Top;
+                borderSizes.Left = value.Left;
+                borderSizes.Right = value.Right;
+                borderSizes.Bottom = value.Bottom;
+            }
+        }
+
+        public static Rectangle WindowArea
+        {
+            get
+            {
+                if (!GameClient.Attached)
+                    return new Rectangle();
+
+                var windowArea = new Rectangle();
+                if (GameClient.WindowHandle == IntPtr.Zero)
+                    return windowArea;
+
+                if (NativeMethods.GetWindowRect(GameClient.WindowHandle, ref windowArea) == 0)
+                    WindowLog.Log(LogLevel.Error, $"Get window rectangle win32 error selectedWindowHandle {GameClient.WindowHandle:d}");
+
+                return windowArea;
+            }
+            set => throw new NotImplementedException();
+        }
+
+        public static Rectangle TotalArea
+        {
+            get
+            {
+                var totalArea = WindowArea;
+
+                totalArea.Top += BorderSizes.Top;
+                totalArea.Left += BorderSizes.Left;
+                totalArea.Right -= BorderSizes.Right;
+                totalArea.Bottom -= BorderSizes.Bottom;
+
+                return totalArea;
+            }
+            set => throw new NotImplementedException();
+        }
+
         public static void LaunchCursorLockingThread(IntPtr windowHandle)
         {
             new Thread(() =>
@@ -24,9 +99,6 @@ namespace EldenRingPatcher
 
         private static void LockCursor(IntPtr windowHandle)
         {
-            var windowArea = new Rectangle();
-            var windowBorderSize = new Rectangle();
-
             WindowStyleFlag previousStyle = 0;
             var selectedWindowHadFocus = false;
             var validateHandleCount = 0;
@@ -38,25 +110,19 @@ namespace EldenRingPatcher
                 if (previousStyle != NativeMethods.GetWindowLong(windowHandle, WindowLongIndex.GWL_STYLE))
                 {
                     // Determine border sizes for the selected window
-                    windowBorderSize = GetBorderSizes(windowHandle);
+                    BorderSizes = GetBorderSizes(windowHandle);
                     previousStyle = NativeMethods.GetWindowLong(windowHandle, WindowLongIndex.GWL_STYLE);
                 }
 
                 if (NativeMethods.GetForegroundWindow() == windowHandle)
                 {
-                    if (NativeMethods.GetWindowRect(windowHandle, ref windowArea) == 0)
-                        throw new Win32Exception(Marshal.GetLastWin32Error(), $"Get window rectangle win32 error. selectedWindowHandle {windowHandle:d}");
+                    var clipArea = ExpandAreaByOffset(TotalArea, 10);
 
-                    windowArea.Top += windowBorderSize.Top + 10;
-                    windowArea.Left += windowBorderSize.Left + 10;
-                    windowArea.Right -= windowBorderSize.Right + 10;
-                    windowArea.Bottom -= windowBorderSize.Bottom + 10;
+                    // TODO: check if CurPosition outside boundaries of windowArea clip only if needed to
 
-                   // TODO: check if CurPosition outside boundaries of windowArea clip only if needed to
-
-                    WindowLog.Log(LogLevel.Info, "Clipping cursor to process window!");
-                    if (NativeMethods.ClipCursor(ref windowArea) == 0)
-                        throw new Win32Exception(Marshal.GetLastWin32Error(), $"Clip cursor win32 error. windowArea {windowArea}");
+                    WindowLog.Log(LogLevel.Info, "Clipping cursor to area: {0}", clipArea);
+                    if (NativeMethods.ClipCursor(ref clipArea) == 0)
+                        throw new Win32Exception(Marshal.GetLastWin32Error(), $"Clip cursor win32 error! Clip area: {clipArea}");
 
                     selectedWindowHadFocus = true;
                     Thread.Sleep(300); // This is not nice :[
@@ -116,7 +182,7 @@ namespace EldenRingPatcher
             return windowRectangle;
         }
 
-        public static string GetText(IntPtr hWnd, int maxStringLength)
+        private static string GetText(IntPtr hWnd, int maxStringLength)
         {
             var stringBuilder = new StringBuilder(maxStringLength);
 
@@ -124,58 +190,14 @@ namespace EldenRingPatcher
                 ? null : stringBuilder.ToString();
         }
 
-        public static IntPtr GetHandle(string processName)
+        private static Rectangle ExpandAreaByOffset(Rectangle area, int offset)
         {
-            foreach (var processList in Process.GetProcesses())
-                if (processList.MainWindowTitle.Contains(processName))
-                    return processList.MainWindowHandle;
+            area.Top += offset;
+            area.Left += offset;
+            area.Right += offset;
+            area.Bottom += offset;
 
-            return IntPtr.Zero;
-        }
-
-        public static List<IntPtr> GetAllHandles(bool outputWindowNames = true)
-        {
-            var windowHandles = new List<IntPtr>();
-
-            var processList = Process.GetProcesses();
-
-            windowHandles.Clear();
-            var indexCounter = 1;
-
-            foreach (var process in processList)
-            {
-                if (string.IsNullOrEmpty(process.MainWindowTitle)) continue;
-                if (WindowSettings.VerboseOutput)
-                    WindowLog.Log(LogLevel.Info, $"{process.ProcessName}: {process.MainWindowHandle}|{process.MainWindowTitle}");
-
-                if (outputWindowNames)
-                {
-                    var windowTitle = RemoveSpecialChars(process.MainWindowTitle);
-                    WindowLog.Log(LogLevel.Info, "({0:d}) : {1}",
-                        indexCounter,
-                        windowTitle[..Math.Min(windowTitle.Length, WindowSettings.WindowTitleMaxLength)]);
-                }
-
-                windowHandles.Add(process.MainWindowHandle);
-                indexCounter++;
-            }
-
-            return windowHandles;
-        }
-
-        private static string RemoveSpecialChars(string str)
-        {
-            const char tradeMark = (char)8482;
-            const char registeredTrademark = (char)174;
-            const char copyRight = (char)169;
-
-            var badChars = new[] { tradeMark, registeredTrademark, copyRight };
-
-            foreach (var badChar in badChars)
-                if (str.Contains(badChar))
-                    return str.Replace(badChar, '\0');
-
-            return str;
+            return area;
         }
     }
 }

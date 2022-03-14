@@ -4,25 +4,26 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:nLogViewer="clr-namespace:EldenRingPatcher.Controls.LogViewer;assembly=EldenRingPatcher.Controls"
+        xmlns:gameTab="clr-namespace:EldenRingPatcher.App.GameTab"
         mc:Ignorable="d"
         Title="Elden Ring Patcher 0.0.1 alpha" Height="450" Width="800">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"></RowDefinition>
-            <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition Height="200"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
 
         <StackPanel Grid.Row="0">
             <Menu Width="Auto" Height="20">
                 <MenuItem Header="File">
-                    <MenuItem Header="Exit" HorizontalAlignment="Left" Width="Auto" Click="AppExit"/>
+                    <MenuItem Header="Exit" HorizontalAlignment="Left" Width="Auto" Click="AppExit" />
                 </MenuItem>
                 <MenuItem Header="ENB">
-                    <MenuItem Header="Enb" HorizontalAlignment="Left" Width="Auto"/>
+                    <MenuItem Header="Enb" HorizontalAlignment="Left" Width="Auto" />
                 </MenuItem>
                 <MenuItem Header="ReShade">
-                    <MenuItem Header="ReShade" HorizontalAlignment="Left" Width="Auto"/>
+                    <MenuItem Header="ReShade" HorizontalAlignment="Left" Width="Auto" />
                 </MenuItem>
                 <MenuItem Header="Mod Folder Explorer">
                 </MenuItem>
@@ -31,17 +32,24 @@
             </Menu>
         </StackPanel>
 
-        <GroupBox Grid.Row="1" Header="Window">
-            <Grid>
+            <Grid Grid.Row="1">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="auto"></RowDefinition>
-                    <RowDefinition Height="auto"></RowDefinition>
+                    <RowDefinition Height="*"></RowDefinition>
                 </Grid.RowDefinitions>
-                <Button Grid.Row="0" Content="Lock Cursor To Window" HorizontalAlignment="Left" Margin="10,3,0,0" VerticalAlignment="Top" Click="LockCursorToWindow"/>
+                <TabControl>
+                    <TabItem Header="GameClient">
+                        <gameTab:GameClientTab>
+                        </gameTab:GameClientTab>
+                    </TabItem>
+                    <TabItem Header="Window">
+                        <Grid Background="#FFE5E5E5">
+                            <Button Grid.Row="0" Content="Lock Cursor To Window" HorizontalAlignment="Left" Margin="10,3,0,0" VerticalAlignment="Top" Click="LockCursorClick" />
+                        </Grid>
+                    </TabItem>
+                </TabControl>
             </Grid>
-        </GroupBox>
 
-        <GroupBox Grid.Row="2" Header="Main Log">
+        <GroupBox Grid.Row="2" Header="Log">
             <nLogViewer:NLogViewer TimeWidth="AUTO" LoggerNameWidth="85" LevelWidth="auto" ExceptionWidth="auto" MessageWidth="auto" MaximumLogEntries="2000"/>
         </GroupBox>
     </Grid>

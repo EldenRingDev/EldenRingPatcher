@@ -11,20 +11,20 @@ namespace EldenRingPatcher
     {
         private static readonly Logger MouseLog = LogManager.GetLogger("Mouse");
         private static readonly Delegates.LowLevelMouseProc hookProcedure = HookCallback;
-        private static IntPtr _hookID = IntPtr.Zero;
+        private static IntPtr hookID = IntPtr.Zero;
 
         public static Point CurPosition { get; set; }
 
         public static void InitHook()
         {
-            _hookID = SetHook(hookProcedure);
-            if (_hookID == IntPtr.Zero)
+            hookID = SetHook(hookProcedure);
+            if (hookID == IntPtr.Zero)
                 MouseLog.Error("Failed to init mouse hook!");
         }
 
         public static void ReleaseHook()
         {
-            NativeMethods.UnhookWindowsHookEx(_hookID);
+            NativeMethods.UnhookWindowsHookEx(hookID);
         }
 
         private static IntPtr SetHook(Delegates.LowLevelMouseProc procedure)
@@ -51,7 +51,7 @@ namespace EldenRingPatcher
                 }
             }
             
-            return NativeMethods.CallNextHookEx(_hookID, nCode, wParam, lParam);
+            return NativeMethods.CallNextHookEx(hookID, nCode, wParam, lParam);
         }
 
         private static Point GetPoint(IntPtr _xy)

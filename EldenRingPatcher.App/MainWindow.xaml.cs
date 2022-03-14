@@ -22,21 +22,13 @@ namespace EldenRingPatcher.App
             Mouse.ReleaseHook();
         }
 
-        private void LockCursorToWindow(object sender, EventArgs e)
+        private void LockCursorClick(object sender, EventArgs e)
         {
-            var hEldenRing = Window.GetHandle("ELDEN RING™");
-            if (hEldenRing == IntPtr.Zero)
-                MainLog.Log(LogLevel.Error, "Failed to get Elden Ring window handle!");
-
-            MainLog.Log(LogLevel.Info, "Obtained Elden Ring window handle: 0x{0:x}", hEldenRing);
-
-            var windowTitle = Window.GetText(hEldenRing, WindowSettings.WindowTitleMaxLength);
-            if (windowTitle == null)
-                MainLog.Log(LogLevel.Error, "The Elden Ring window doesn't exists anymore!");
-
-            MainLog.Log(LogLevel.Info, "Locking Cursor to {0}", windowTitle);
+            MainLog.Log(LogLevel.Info, "Locking cursor to window: {0}", Window.Title);
+            MainLog.Log(LogLevel.Info, "Window borderSizes: {0}", Window.BorderSizes.ToString());
+            MainLog.Log(LogLevel.Info, "Window area: {0}", Window.WindowArea.ToString());
             Mouse.InitHook();
-            Window.LaunchCursorLockingThread(hEldenRing);
+            Window.LaunchCursorLockingThread(GameClient.WindowHandle);
         }
     }
 }

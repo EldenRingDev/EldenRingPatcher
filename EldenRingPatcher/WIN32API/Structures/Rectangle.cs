@@ -11,6 +11,14 @@ namespace EldenRingPatcher.WIN32API.Structures
         public int Right;
         public int Bottom;
 
+        public Rectangle(int left, int top, int right, int bottom)
+        {
+            Left = left;
+            Top = top;
+            Right = right;
+            Bottom = bottom;
+        }
+
         public override string ToString() =>
             $"Left : {Left:d}, Top : {Top:d}, Right : {Right:d}, Bottom : {Bottom:d}";
     }
