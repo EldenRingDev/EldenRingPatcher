@@ -9,6 +9,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Reloaded.Assembler" Version="1.0.10" />
     <PackageReference Include="Reloaded.Memory.Sigscan" Version="1.2.1" />
   </ItemGroup>
 

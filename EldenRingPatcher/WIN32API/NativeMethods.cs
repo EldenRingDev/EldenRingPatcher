@@ -46,6 +46,9 @@ namespace EldenRingPatcher.WIN32API
         internal static extern IntPtr OpenProcess(ProcessAccessFlag dwDesiredAccess, bool bInheritHandle, int dwProcessId);
 
         [DllImport("kernel32.dll", CharSet = CharSet.Auto, EntryPoint = "ReadProcessMemory", SetLastError = true)]
-        internal static extern bool ReadProcessMemory(IntPtr hProcess, IntPtr lpBaseAddress, [Out] byte[] lpBuffer, int dwSize, out int lpNumberOfBytesRead);
+        internal static extern bool ReadProcessMemory(IntPtr hProcess, IntPtr lpBaseAddress, [Out] byte[] lpBuffer, int nSize, out int lpNumberOfBytesRead);
+
+        [DllImport("kernel32.dll", CharSet = CharSet.Auto, EntryPoint = "WriteProcessMemory", SetLastError = true)]
+        internal static extern bool WriteProcessMemory(IntPtr hProcess, IntPtr lpBaseAddress, byte[] lpBuffer, int nSize, IntPtr lpNumberOfBytesWritten);
     }
 }
