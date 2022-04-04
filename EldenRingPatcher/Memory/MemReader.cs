@@ -17,7 +17,7 @@ namespace EldenRingPatcher.Memory
 
             byte[] arrayOfBytes = ReadBytes(address, sizeOfType);
             GCHandle gcHandle = GCHandle.Alloc(arrayOfBytes, GCHandleType.Pinned);
-            T obj = (T)Marshal.PtrToStructure(gcHandle.AddrOfPinnedObject(), typeof(T))!;
+            T obj = (T)Marshal.PtrToStructure(gcHandle.AddrOfPinnedObject(), typeof(T));
 
             gcHandle.Free();
             return obj;
